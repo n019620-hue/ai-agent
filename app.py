@@ -77,7 +77,7 @@ def chat():
     data = {
         "model": "deepseek/deepseek-chat",
         "messages": messages
-        "max_token": 1000
+        "max_tokens": 1000
     }
 
     try:
