@@ -75,7 +75,7 @@ def chat():
     }
 
     data = {
-        "model": "deepseek/deepseek-chat",
+        "model": "mistralai/mistral-7b-instruct",
         "messages": messages,
         "max_tokens": 1000
     }
