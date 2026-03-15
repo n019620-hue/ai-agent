@@ -75,7 +75,7 @@ def chat():
     }
 
     data = {
-        "model": "mistralai/mistral-7b-instruct",
+        "model": "google/gemma-7b-it",
         "messages": messages,
         "max_tokens": 1000
     }
