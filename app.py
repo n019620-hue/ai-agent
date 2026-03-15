@@ -1,19 +1,18 @@
 from flask import Flask, request, jsonify, render_template
 import requests
 import os
-import datetime
 import json
 from googlesearch import search
 
 app = Flask(__name__)
 
-# API KEY (Render Environment Variable)
+# API KEY from Render Environment
 API_KEY = os.getenv("OPENROUTER_API_KEY")
 
 MEMORY_FILE = "memory.json"
 
 
-# -------- MEMORY SYSTEM --------
+# -------- MEMORY --------
 
 def load_memory():
     if os.path.exists(MEMORY_FILE):
@@ -27,7 +26,7 @@ def save_memory(memory):
         json.dump(memory, f)
 
 
-# -------- HOME PAGE --------
+# -------- HOME --------
 
 @app.route("/")
 def home():
@@ -45,8 +44,7 @@ def chat():
 
     messages = []
 
-    # last memory
-    for m in memory[-5:]:
+    for m in memory[-6:]:
         messages.append(m)
 
     messages.append({
@@ -64,13 +62,16 @@ def chat():
     except:
         pass
 
+
     # -------- AI REQUEST --------
 
     url = "https://openrouter.ai/api/v1/chat/completions"
 
     headers = {
         "Authorization": f"Bearer {API_KEY}",
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "HTTP-Referer": "https://ai-agent-xgf4.onrender.com",
+        "X-Title": "AI Agent"
     }
 
     data = {
@@ -84,14 +85,17 @@ def chat():
 
         response = res.json()
 
+        print(response)  # debug log
+
         if "choices" in response:
             reply = response["choices"][0]["message"]["content"]
         else:
-            reply = "AI error. Check API key or internet."
+            reply = str(response)
 
     except Exception as e:
 
         reply = "Server error: " + str(e)
+
 
     # -------- SAVE MEMORY --------
 
@@ -117,4 +121,4 @@ def chat():
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=port)
